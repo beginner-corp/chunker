@@ -33,3 +33,20 @@ test('unchunk', async t=> {
   let copy = fs.readFileSync(baked)
   t.deepEqual(original, copy)
 })
+
+test('sort', t=> {
+  t.plan(1)
+  let data = [
+    'b85b49ab6fba97223597c4d9b576d05f35da2144-2-4',
+    'b85b49ab6fba97223597c4d9b576d05f35da2144-1-4',
+    'b85b49ab6fba97223597c4d9b576d05f35da2144-0-4',
+    'b85b49ab6fba97223597c4d9b576d05f35da2144-3-4',
+  ].sort()
+  console.log(data)
+  t.deepEqual(data, [
+    'b85b49ab6fba97223597c4d9b576d05f35da2144-0-4',
+    'b85b49ab6fba97223597c4d9b576d05f35da2144-1-4',
+    'b85b49ab6fba97223597c4d9b576d05f35da2144-2-4',
+    'b85b49ab6fba97223597c4d9b576d05f35da2144-3-4',
+  ])
+})

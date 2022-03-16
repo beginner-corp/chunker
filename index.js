@@ -9,7 +9,7 @@ async function chunk({src, dest}) {
 
   // read src to a buffer
   let raw = fs.readFileSync(src) 
-  let shasum = crypto.createHash('sha1').update(src)
+  let shasum = crypto.createHash('sha1').update(raw.toString('base64'))
   let guid = shasum.digest('hex')
   let chunks = []
   let index = 0
