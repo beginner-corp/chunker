@@ -1,0 +1,11 @@
+{
+  "name": "@begin/chunker",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "tape test.js | tap-spec"
+  },
+  "dependencies": {
+    "tap-spec": "^5.0.0",
+    "tape": "^5.5.2"
+  }
+}
