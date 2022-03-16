@@ -42,10 +42,8 @@ async function unchunk({src, dest}) {
   let fmt = f=> path.join(src, f.name) 
   let chunks = fs.readdirSync(src, { withFileTypes: true }).map(fmt)
   let result = []
-  for (let chunk of chunks) {
-    let raw = fs.readFileSync(chunk)
-    for (const [i, b] of raw.entries())
+  for (let chunk of chunks)
+    for (const [i, b] of fs.readFileSync(chunk).entries())
       result.push(b)
-  }
   fs.writeFileSync(dest, Buffer.from(result))
 }
