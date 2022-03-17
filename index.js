@@ -29,6 +29,7 @@ async function chunk ({ src, dest, maxSize, write = true }) {
       fs.writeFileSync(path.join(dest, name), buf)
     })
   }
+  else return chunks
 }
 
 async function unchunk ({ src, dest, write = true }) {
@@ -38,7 +39,9 @@ async function unchunk ({ src, dest, write = true }) {
   for (let chunk of chunks) {
     result.push(fs.readFileSync(chunk))
   }
+  let buf = Buffer.concat(result)
   if (write) {
-    fs.writeFileSync(dest, Buffer.concat(result))
+    fs.writeFileSync(dest, buf)
   }
+  else return buf
 }
