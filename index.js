@@ -5,7 +5,7 @@ const CHUNK_MAX = 3e+6 // 3mb
 
 module.exports = { chunk, unchunk }
 
-async function chunk ({ src, dest, maxSize }) {
+async function chunk ({ src, dest, maxSize, write = true }) {
   maxSize = maxSize || CHUNK_MAX
 
   // read src to a buffer
@@ -24,19 +24,21 @@ async function chunk ({ src, dest, maxSize }) {
     chunks[name] = raw.subarray(start, end)
   })
 
-  Object.entries(chunks).forEach(([ name, buf ]) => {
-    fs.writeFileSync(path.join(dest, name), buf)
-  })
+  if (write) {
+    Object.entries(chunks).forEach(([ name, buf ]) => {
+      fs.writeFileSync(path.join(dest, name), buf)
+    })
+  }
 }
 
-async function unchunk ({ src, dest }) {
+async function unchunk ({ src, dest, write = true }) {
   let fmt = f => path.join(src, f.name)
   let chunks = fs.readdirSync(src, { withFileTypes: true }).map(fmt)
   let result = []
   for (let chunk of chunks) {
-    for (const [ , b ] of fs.readFileSync(chunk).entries()) {
-      result.push(b)
-    }
+    result.push(fs.readFileSync(chunk))
   }
-  fs.writeFileSync(dest, Buffer.from(result))
+  if (write) {
+    fs.writeFileSync(dest, Buffer.concat(result))
+  }
 }
