@@ -12,39 +12,31 @@ async function chunk ({ src, dest, maxSize }) {
   let raw = fs.readFileSync(src)
   let shasum = crypto.createHash('sha1').update(raw.toString('base64'))
   let guid = shasum.digest('hex')
-  let chunks = []
-  let index = 0
+  let chunks = {}
 
-  // iterate the bytes
-  for (const [ , byte ] of raw.entries()) {
+  // chunk le bytes
+  let count = Math.ceil(raw.length / maxSize)
+  let loop = new Array(count).fill(0)
+  loop.forEach((zero, i) => {
+    let name = `${guid}-${i}-${count}`
+    let start = i * maxSize
+    let end = (i + 1) * maxSize
+    chunks[name] = raw.subarray(start, end)
+  })
 
-    // if the current chunk is full increment the index
-    if (chunks[index] && chunks[index].length >= maxSize)
-      index += 1
-
-    // init current chunk index to an array
-    if (!chunks[index])
-      chunks[index] = []
-
-    // push byte into chunk
-    chunks[index].push(byte)
-  }
-
-  // chunk src into 3mb chunks
-  let count = chunks.length
-  for (let index = 0; index < count; index++) {
-    let name = `${guid}-${index}-${count}`
-    let b = Buffer.from(chunks[index])
-    fs.writeFileSync(path.join(dest, name), b)
-  }
+  Object.entries(chunks).forEach(([ name, buf ]) => {
+    fs.writeFileSync(path.join(dest, name), buf)
+  })
 }
 
 async function unchunk ({ src, dest }) {
   let fmt = f => path.join(src, f.name)
   let chunks = fs.readdirSync(src, { withFileTypes: true }).map(fmt)
   let result = []
-  for (let chunk of chunks)
-    for (const [ , b ] of fs.readFileSync(chunk).entries())
+  for (let chunk of chunks) {
+    for (const [ , b ] of fs.readFileSync(chunk).entries()) {
       result.push(b)
+    }
+  }
   fs.writeFileSync(dest, Buffer.from(result))
 }
