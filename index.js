@@ -5,7 +5,8 @@ const CHUNK_MAX = 3e+6 // 3mb
 
 module.exports = { chunk, unchunk }
 
-async function chunk ({ src, dest }) {
+async function chunk ({ src, dest, maxSize }) {
+  maxSize = maxSize || CHUNK_MAX
 
   // read src to a buffer
   let raw = fs.readFileSync(src)
@@ -18,7 +19,7 @@ async function chunk ({ src, dest }) {
   for (const [ , byte ] of raw.entries()) {
 
     // if the current chunk is full increment the index
-    if (chunks[index] && chunks[index].length >= CHUNK_MAX)
+    if (chunks[index] && chunks[index].length >= maxSize)
       index += 1
 
     // init current chunk index to an array
