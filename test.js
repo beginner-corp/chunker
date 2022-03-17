@@ -48,14 +48,14 @@ test('Unchunk (default size of 3MB, returned in buffer)', async t => {
   t.deepEqual(original, copy, 'Unchunked buffer matches')
 })
 
-test('Chunk (default size of 3MB, returned in an object)', async t => {
+test('Chunk + unchunk (default size of 3MB, returned in an object + buffer)', async t => {
   t.plan(2)
   dest = newDest()
   reset()
   let chunks = await chunk({ src, write: false })
   t.equal(Object.keys(chunks).length, 4, 'There are four chunks')
-  let manuallyUnchunked = Buffer.concat(Object.values(chunks))
-  t.deepEqual(original, manuallyUnchunked, 'Unchunked / rechunked files match')
+  let unchunked = await unchunk({ chunks, write: false })
+  t.deepEqual(original, unchunked, 'Unchunked / rechunked files match')
   console.log(chunks)
 })
 
@@ -88,14 +88,14 @@ test('Unchunk (specified size of 1MB, returned in buffer)', async t => {
   t.deepEqual(original, copy, 'Unchunked buffer matches')
 })
 
-test('Chunk (specified size of 1MB, returned in an object)', async t => {
+test('Chunk + unchunk (specified size of 1MB, returned in an object + buffer)', async t => {
   t.plan(2)
   dest = newDest()
   reset()
   let chunks = await chunk({ src, maxSize, write: false })
   t.equal(Object.keys(chunks).length, 10, 'There are ten chunks')
-  let manuallyUnchunked = Buffer.concat(Object.values(chunks))
-  t.deepEqual(original, manuallyUnchunked, 'Unchunked / rechunked files match')
+  let unchunked = await unchunk({ chunks, write: false })
+  t.deepEqual(original, unchunked, 'Unchunked / rechunked files match')
   console.log(chunks)
 })
 
