@@ -7,34 +7,36 @@ let baked = path.join(__dirname, 'baked.zip')
 
 let { chunk, unchunk } = require('.')
 
-test('clobber', async t=> {
+test('clobber', async t => {
   t.plan(1)
-  try { fs.rmSync(baked) } catch(e) {}
-  try { fs.rmdirSync(dest, {recursive: true}) } catch(e) {}
+  try { fs.rmSync(baked) }
+  catch (e) { /* noop */ }
+  try { fs.rmSync(dest, { recursive: true, force: true }) }
+  catch (e) { /* noop */ }
   t.pass('clobbered tmp')
 })
 
-test('chunk', async t=> {
+test('chunk', async t => {
   t.plan(1)
-  fs.mkdirSync(dest, {recursive: true})
-  let result = await chunk({src, dest}) 
+  fs.mkdirSync(dest, { recursive: true })
+  await chunk({ src, dest })
   let chunks = fs.readdirSync(dest, { withFileTypes: true })
   t.ok(chunks.length === 4, 'there are four chunks')
   console.log(chunks)
 })
 
-test('unchunk', async t=> {
+test('unchunk', async t => {
   t.plan(1)
   await unchunk({
     src: dest,
-    dest: baked, 
+    dest: baked,
   })
   let original = fs.readFileSync(src)
   let copy = fs.readFileSync(baked)
   t.deepEqual(original, copy)
 })
 
-test('sort', t=> {
+test('sort', t => {
   t.plan(1)
   let data = [
     'b85b49ab6fba97223597c4d9b576d05f35da2144-2-4',
