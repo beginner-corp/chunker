@@ -2,7 +2,8 @@ let test = require('tape')
 let path = require('path')
 let fs = require('fs')
 let src = path.join(__dirname, 'arc-basic.zip')
-let newDest = () => path.join(__dirname, 'tmp', `${Date.now()}`)
+let tmp = path.join(__dirname, 'tmp')
+let newDest = () => path.join(tmp, `${Date.now()}`)
 let baked = path.join(__dirname, 'baked.zip')
 let { chunk, unchunk } = require('.')
 let dest
@@ -10,7 +11,7 @@ let dest
 function reset () {
   try { fs.rmSync(baked) }
   catch (e) { /* noop */ }
-  try { fs.rmSync(dest, { recursive: true, force: true }) }
+  try { fs.rmSync(tmp, { recursive: true, force: true }) }
   catch (e) { /* noop */ }
   fs.mkdirSync(dest, { recursive: true })
 }

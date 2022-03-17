@@ -3,7 +3,8 @@
   "version": "1.0.2",
   "description": "Chunk binary files into smaller pieces",
   "scripts": {
-    "test": "npm run lint && tape test.js | tap-spec",
+    "test": "npm run lint && npm run test:unit",
+    "test:unit": "tape test.js | tap-spec",
     "lint": "eslint . --fix"
   },
   "license": "Apache-2.0",
