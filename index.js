@@ -1,15 +1,15 @@
-const fs = require('fs')
+const { readdir, readFile, writeFile } = require('fs/promises')
 const crypto = require('crypto')
-const path = require('path')
-const CHUNK_MAX = 3e+6 // 3mb
+const { join } = require('path')
+const CHUNK_MAX = 3e+6 // 3MB
 
 module.exports = { chunk, unchunk }
 
-async function chunk ({ src, dest, maxSize, write = true }) {
+async function chunk ({ data, src, dest, maxSize, write = true }) {
   maxSize = maxSize || CHUNK_MAX
 
   // read src to a buffer
-  let raw = fs.readFileSync(src)
+  let raw = data || await readFile(src)
   let shasum = crypto.createHash('sha1').update(raw.toString('base64'))
   let guid = shasum.digest('hex')
   let chunks = {}
@@ -25,23 +25,32 @@ async function chunk ({ src, dest, maxSize, write = true }) {
   })
 
   if (write) {
-    Object.entries(chunks).forEach(([ name, buf ]) => {
-      fs.writeFileSync(path.join(dest, name), buf)
-    })
+    for (let [ name, buf ] of Object.entries(chunks)) {
+      await writeFile(join(dest, name), buf)
+    }
   }
   else return chunks
 }
 
-async function unchunk ({ src, dest, write = true }) {
-  let fmt = f => path.join(src, f.name)
-  let chunks = fs.readdirSync(src, { withFileTypes: true }).map(fmt)
+async function unchunk ({ chunks, src, dest, write = true }) {
   let result = []
-  for (let chunk of chunks) {
-    result.push(fs.readFileSync(chunk))
+  if (chunks) {
+    Object.keys(chunks).sort().forEach(k => {
+      result.push(chunks[k])
+    })
   }
+  else {
+    let fmt = f => join(src, f.name)
+    let chunks = await readdir(src, { withFileTypes: true })
+    chunks = chunks.map(fmt).sort()
+    for (let chunk of chunks) {
+      result.push(await readFile(chunk))
+    }
+  }
+
   let buf = Buffer.concat(result)
   if (write) {
-    fs.writeFileSync(dest, buf)
+    await writeFile(dest, buf)
   }
   else return buf
 }
