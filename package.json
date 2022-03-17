@@ -1,11 +1,28 @@
 {
   "name": "@begin/chunker",
   "version": "1.0.2",
+  "description": "Chunk binary files into smaller pieces",
   "scripts": {
-    "test": "tape test.js | tap-spec"
+    "test": "npm run lint && tape test.js | tap-spec",
+    "lint": "eslint . --fix"
   },
-  "dependencies": {
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beginner-corp/chunker.git"
+  },
+  "bugs": "https://github.com/beginner-corp/chunker/issues",
+  "homepage": "https://github.com/beginner-corp/chunker#readme",
+  "files": [
+    "index.js"
+  ],
+  "devDependencies": {
+    "@architect/eslint-config": "^2.0.1",
+    "eslint": "^8.11.0",
     "tap-spec": "^5.0.0",
     "tape": "^5.5.2"
+  },
+  "eslintConfig": {
+    "extends": "@architect/eslint-config"
   }
 }
