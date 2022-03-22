@@ -10,7 +10,7 @@ async function chunk ({ data, src, dest, maxSize, write = true }) {
 
   // read src to a buffer
   let raw = data || await readFile(src)
-  let shasum = crypto.createHash('sha1').update(raw.toString('base64'))
+  let shasum = crypto.createHash('sha256').update(raw)
   let guid = shasum.digest('hex')
   let chunks = {}
 
