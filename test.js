@@ -99,6 +99,16 @@ test('Chunk + unchunk (specified size of 1MB, returned in an object + buffer)', 
   console.log(chunks)
 })
 
+test('Chunk + unchunk a bunch of chunks (specified size of 50KB, returned in an object + buffer)', async t => {
+  t.plan(2)
+  dest = newDest()
+  reset()
+  let chunks = await chunk({ src, maxSize: 1000 * 50, write: false })
+  t.equal(Object.keys(chunks).length, 195, 'There are 195 chunks')
+  let unchunked = await unchunk({ chunks, write: false })
+  t.deepEqual(original, unchunked, 'Unchunked / rechunked files match')
+})
+
 test('Teardown', t => {
   t.plan(1)
   reset()

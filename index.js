@@ -16,9 +16,11 @@ async function chunk ({ data, src, dest, maxSize, write = true }) {
 
   // chunk le bytes
   let count = Math.ceil(raw.length / maxSize)
+  let positions = String(count).length
   let loop = new Array(count).fill(0)
   loop.forEach((zero, i) => {
-    let name = `${guid}-${i}-${count}`
+    let num = String(i + 1).padStart(positions, '0')
+    let name = `${guid}-${num}-${count}`
     let start = i * maxSize
     let end = (i + 1) * maxSize
     chunks[name] = raw.subarray(start, end)
